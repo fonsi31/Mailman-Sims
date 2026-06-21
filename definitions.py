@@ -1,18 +1,20 @@
 import csv
 import os
-import time
+from time import sleep
+import shutil
+
 
 motorcycle = r"""
-      --------------------       `   `.
-           <```--...       .---.//  < `.
-            `..     `.___ /       ___`.'
-              _`_ .      `      .'\\__
-            .'---`.`.          / .'---`.
-           /.'  _`.\_\        / /.'\\ `.\
-           ||  <__||_|        | ||  ~  ||
-           \`.___.'/ /________\ \`.___.'/
-            `.___.'              `.___.' 
-            """
+--------------------         `   `.
+       <```--...       .---.//  < `.
+         `..     `.___ /       ___`.'
+          _ `_.      `      .'\\__
+        .'---`.`.          / .'---`.
+       /.'  _`.\_\        / /.'\\ `.\
+       ||  <__||_|        | ||  ~  ||
+       \`.___.'/ /________\ \`.___.'/
+        `.___.'              `.___.' 
+"""
 
 def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
@@ -38,7 +40,8 @@ def load_map(file_name):
             return {}
 
 def display_animation(sorted_mails):
-    pass
+    clear_terminal()
+
 
 def sort_mails(map, mails, low, high): #Quick Sort
     #sorts the list mails in a descending order
