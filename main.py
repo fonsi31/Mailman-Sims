@@ -2,11 +2,11 @@ from definitions import *
 
 def main():
     location = input("Location of Map: ")
-    map = load_map(location)
+    delivery_map = load_map(location)
     clear_terminal()
     cities = []
-
-    for loc in map.values():
+    
+    for loc in delivery_map.values():
         if not loc["City"] in cities:
             cities.append(loc["City"])
     
@@ -21,15 +21,15 @@ def main():
 
         match choice:
             case "1":
-                pass
+                deliver_mails(cities[0], delivery_map)
             case "2":
-                pass
+                deliver_mails(cities[1], delivery_map)
             case "3":
-                pass
+                deliver_mails(cities[2], delivery_map)
             case "4":
-                pass
+                deliver_mails(cities[3], delivery_map)
             case "5":
-                pass
+                break
             case _:
                 print("Invalid Input!")
                 input("Press Enter to continue...")
