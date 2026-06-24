@@ -27,6 +27,7 @@ def load_map(file_name):
 
     if not os.path.exists(file_path):
         print("File not found!")
+        input("Press 'Enter' to continue...")
         return {}
 
     with open(file_path, "r", newline="") as file:
@@ -41,6 +42,7 @@ def load_map(file_name):
             return delivery_map
         except Exception as e:
             print("ERROR: ", e)
+            input("Press 'Enter' to continue...")
             return {}
      
 def display_animation(sorted_mails, current_city):
@@ -100,7 +102,7 @@ def display_animation(sorted_mails, current_city):
         if flag:
             print(frame)
         print(routes[i])
-        sleep(0.25)
+        sleep(0.25) 
         clear_terminal()
 
     #draw and print the figure one last time
@@ -115,7 +117,7 @@ def display_animation(sorted_mails, current_city):
     return frame + "\n" + routes[i]
 
 def sort_mails(delivery_map, mails, low, high): #Quick Sort
-    #sorts the mails in a descending order (by distance)
+    #sorts the mails in a descending order by distance from the post office of the current city
     if low >= high:
         return mails
     pv = low #pivot index
@@ -196,7 +198,7 @@ def deliver_mails(starting_city, delivery_map):
                 segregated_mails.append(place)
                 destinations.remove(place)
 
-        if len(segregated_mails) > 0: 
+        if len(segregated_mails) > 0: #skips this part if there are no mails for the current city
             sort_mails(delivery_map, segregated_mails, 0, len(segregated_mails)-1)
             figure = display_animation(segregated_mails, current_city)
             if cities_visited == len(diff_cities) - 1:

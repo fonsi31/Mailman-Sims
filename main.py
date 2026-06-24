@@ -28,10 +28,10 @@ def main():
                     deliver_mails(cities[choice-1], delivery_map)
                 elif choice < 1 or choice > len(cities) + 1:
                     print("Invalid Input")
-                    input("Press enter to continue...")
+                    input("Press 'Enter' to continue...")
             else:
                 print("Invalid Input!")
-                input("Press enter to continue...")
+                input("Press 'Enter' to continue...")
 
 if __name__ == "__main__":
     main()
