@@ -10,29 +10,28 @@ def main():
         if not loc["City"] in cities:
             cities.append(loc["City"])
     
-    choice = ""
-    while choice != "5":
-        clear_terminal()
-        for i in range(0, len(cities)):
-            print(f"{i+1} - {cities[i]}")
-        print(f"{len(cities)+1} - Exit")
+    if len(cities) < 1:
+        print("Failed to load map!")
+    else:
+        choice = ""
+        while choice != len(cities) + 1:
+            clear_terminal()
+            for i in range(0, len(cities)):
+                print(f"{i+1} - {cities[i]}")
+            print(f"{len(cities)+1} - Exit")
 
-        choice = input("Where do you want to start? ")
+            choice = input("Where do you want to start? ")
 
-        match choice:
-            case "1":
-                deliver_mails(cities[0], delivery_map)
-            case "2":
-                deliver_mails(cities[1], delivery_map)
-            case "3":
-                deliver_mails(cities[2], delivery_map)
-            case "4":
-                deliver_mails(cities[3], delivery_map)
-            case "5":
-                break
-            case _:
+            if choice.isdigit():
+                choice = int(choice)
+                if choice >= 1 and choice <= len(cities):
+                    deliver_mails(cities[choice-1], delivery_map)
+                elif choice < 1 or choice > len(cities) + 1:
+                    print("Invalid Input")
+                    input("Press enter to continue...")
+            else:
                 print("Invalid Input!")
-                input("Press Enter to continue...")
+                input("Press enter to continue...")
 
 if __name__ == "__main__":
     main()

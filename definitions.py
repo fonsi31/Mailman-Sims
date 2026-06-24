@@ -15,6 +15,10 @@ motorcycle = r"""
         `.___.'              `.___.' 
 """
 
+terminal_width = shutil.get_terminal_size().columns
+motorcycle_width = max(len(line) for line in motorcycle.splitlines())
+motorcycle_center = (motorcycle_width // 2) + 6 #Added 6 units since the cargo box forces the center to go further left of the motorcycle
+
 def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -22,6 +26,7 @@ def load_map(file_name):
     file_path = os.path.join(os.path.dirname(__file__), file_name)
 
     if not os.path.exists(file_path):
+        print("File not found!")
         return {}
 
     with open(file_path, "r", newline="") as file:
@@ -33,7 +38,6 @@ def load_map(file_name):
                 delivery_map[line[2]] = {"City": line[0], #The school address or destination will be the key
                                 "Post Office": line[1],
                                 "Distance": float(line[3])} #Distance of the school from the post office it is located in
-            print("Map is loaded!")
             return delivery_map
         except Exception as e:
             print("ERROR: ", e)
@@ -41,8 +45,6 @@ def load_map(file_name):
      
 def display_animation(sorted_mails, current_city):
     clear_terminal()
-    terminal_width = shutil.get_terminal_size().columns
-    motorcycle_width = max(len(line) for line in motorcycle.splitlines())
     post_office = current_city + " Post Office"
     road = "-" * 25
 
@@ -74,11 +76,10 @@ def display_animation(sorted_mails, current_city):
     position = 0 
     i = 0 # index of the current route visible on the terminal
     j = 0 #index for the current dropoff point
-    motorcycle_center = (motorcycle_width // 2) + 6 #Added 6 units since the cargo box forces the center to go further left of the motorcycle
     while len(sorted_mails) > 0:
         deliveries = """"""
         for mail in sorted_mails: #draws the cargo box
-            deliveries = "|" + mail[:18] + "|\n" + deliveries
+            deliveries = "|" + mail[:19] + "|\n" + deliveries
             deliveries = "--------------------\n" + deliveries
         deliveries = deliveries.rstrip("\n")
         figure = deliveries + motorcycle
@@ -101,6 +102,17 @@ def display_animation(sorted_mails, current_city):
         print(routes[i])
         sleep(0.25)
         clear_terminal()
+
+    #draw and print the figure one last time
+    deliveries = """"""
+    for mail in sorted_mails: #draws the cargo box
+        deliveries = "|" + mail[:19] + "|\n" + deliveries
+        deliveries = "--------------------\n" + deliveries
+    deliveries = deliveries.rstrip("\n")
+    figure = deliveries + motorcycle
+    offset = " " * position
+    frame = "\n".join(offset + line for line in figure.splitlines())
+    return frame + "\n" + routes[i]
 
 def sort_mails(delivery_map, mails, low, high): #Quick Sort
     #sorts the mails in a descending order (by distance)
@@ -133,6 +145,7 @@ def deliver_mails(starting_city, delivery_map):
     current_city = starting_city
     destinations = [] #A list of school addresses the rider has to deliver to
     diff_cities = [] #A list of different cities the rider has to visit for delivery
+    diff_cities.append(starting_city)
     
     cities_visited = 0
     
@@ -147,17 +160,18 @@ def deliver_mails(starting_city, delivery_map):
 
     for i in range(0, mails_no): #The user inputs the destination for mail deliveries
         destination = input(f"Destination of mail {i+1}: ")
-        while not destination in delivery_map:
+        while destination not in delivery_map:
             destination = input(f"Destination of mail {i+1}: ")
-        destinations.append(destination)
+        if destination not in destinations:
+            destinations.append(destination)
         if not delivery_map[destination]["City"] in diff_cities:
             diff_cities.append(delivery_map[destination]["City"])
 
     while cities_visited < len(diff_cities):
-        clear_terminal()
         if cities_visited >= 1 and len(diff_cities) > 1:
             print("Let us go to the next Post Office.")
             input("Press 'Enter' to go to the next Post Office")
+            clear_terminal()
             current_city = diff_cities[cities_visited]
             print(f"We are going to {current_city} Post Office to get the mails to be delivered")
             print(motorcycle)
@@ -168,10 +182,11 @@ def deliver_mails(starting_city, delivery_map):
             new_cities = []
             for i in range(0, mails_no): #The user inputs the destination for mail deliveries
                 destination = input(f"Destination of mail {i+1}: ")
-                while not destination in delivery_map:
+                while destination not in delivery_map:
                     destination = input(f"Destination of mail {i+1}: ")
-                destinations.append(destination)
-                if not delivery_map[destination]["City"] in new_cities:
+                if destination not in destinations:
+                    destinations.append(destination)
+                if delivery_map[destination]["City"] not in new_cities:
                     new_cities.append(delivery_map[destination]["City"])
             diff_cities.extend(new_cities)
         
@@ -181,12 +196,20 @@ def deliver_mails(starting_city, delivery_map):
                 segregated_mails.append(place)
                 destinations.remove(place)
 
-        sort_mails(delivery_map, segregated_mails, 0, len(segregated_mails)-1)
-        display_animation(segregated_mails, current_city)
-        clear_terminal()
-        print(motorcycle)
-        print(f"{current_city} Post Office")
-        print(f"All mails for {current_city} are delivered!")
+        if len(segregated_mails) > 0: 
+            sort_mails(delivery_map, segregated_mails, 0, len(segregated_mails)-1)
+            figure = display_animation(segregated_mails, current_city)
+            if cities_visited == len(diff_cities) - 1:
+                print(figure)
+            else:
+                post_office = current_city + " Post Office"
+                motorcycle_copy = motorcycle
+                motorcycle_copy = motorcycle_copy.rstrip("\n")
+                print(motorcycle_copy)
+                print(" " * (motorcycle_width//2-8) + " " * (len(post_office) // 2) + "○")
+                print(" " * (motorcycle_width//2-8) + post_office)
+            print()
+            print(f"All mails for {current_city} are delivered!")
         cities_visited += 1 
     
     print("We are done for today, but you may choose to deliver new mails for other Post Offices again")
